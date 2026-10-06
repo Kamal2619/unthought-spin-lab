@@ -16,8 +16,7 @@ interface CombinationRecord {
 }
 
 /**
- * SpinController — Orchestrates the dual wheels, shared SPIN control,
- * audio triggers, and result revelation.
+ * SpinController — Master coordinator for the centralized Brand × Product spin lab.
  */
 const SpinController: React.FC<SpinControllerProps> = ({
   playTick,
@@ -29,7 +28,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
-  // Wheel stop synchronization flags
+  // Stop state synchronization
   const [brandFinished, setBrandFinished] = useState(false);
   const [productFinished, setProductFinished] = useState(false);
 
@@ -108,12 +107,12 @@ const SpinController: React.FC<SpinControllerProps> = ({
     setConceptCount((prev) => prev + 1);
 
     // Brand wheel: 3.8s, 5 full revolutions
-    const brandDuration = 3800 + Math.random() * 300;
+    const brandDuration = 3800 + Math.random() * 250;
     const brandRevs = 5;
     brandWheel.startSpin(brandIndex, brandDuration, brandRevs);
 
     // Product wheel: 4.4s, 6 full revolutions (stops ~500ms after Brand for dynamic cadence)
-    const productDuration = 4400 + Math.random() * 300;
+    const productDuration = 4400 + Math.random() * 250;
     const productRevs = 6;
     productWheel.startSpin(productIndex, productDuration, productRevs);
   }, [isSpinning, ensureContext, pickNextPair, brandWheel, productWheel]);
@@ -138,13 +137,15 @@ const SpinController: React.FC<SpinControllerProps> = ({
 
   return (
     <div className="spin-experience">
-      {/* Dual Wheel Stage */}
+      {/* Centralized Dual Wheel Stage */}
       <section className="spin-stage" aria-label="Interactive Dual Wheels">
+        {/* Wheel 01: Brand */}
         <div className="wheel-column">
           <div className="wheel-header">
-            <span className="wheel-badge">01</span>
+            <span className="wheel-index">01</span>
+            <span className="wheel-divider">/</span>
             <span className="wheel-title">BRAND</span>
-            <span className="wheel-count">{brands.length} ENTRIES</span>
+            <span className="wheel-count-pill">{brands.length}</span>
           </div>
           <Wheel
             items={brands}
@@ -154,11 +155,20 @@ const SpinController: React.FC<SpinControllerProps> = ({
           />
         </div>
 
+        {/* Central Kinetic Connector */}
+        <div className="wheels-center-connector" aria-hidden="true">
+          <div className="connector-line" />
+          <div className="connector-cross">×</div>
+          <div className="connector-line" />
+        </div>
+
+        {/* Wheel 02: Product */}
         <div className="wheel-column">
           <div className="wheel-header">
-            <span className="wheel-badge">02</span>
+            <span className="wheel-index">02</span>
+            <span className="wheel-divider">/</span>
             <span className="wheel-title">PRODUCT</span>
-            <span className="wheel-count">{products.length} ENTRIES</span>
+            <span className="wheel-count-pill">{products.length}</span>
           </div>
           <Wheel
             items={products}
@@ -169,7 +179,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
         </div>
       </section>
 
-      {/* Central Spin Action */}
+      {/* Centralized Action Area */}
       <div className="spin-action-area">
         <button
           className={`spin-btn ${isSpinning ? 'spinning' : ''}`}
@@ -181,12 +191,12 @@ const SpinController: React.FC<SpinControllerProps> = ({
           <span className="spin-btn-text">
             {isSpinning ? 'SPINNING…' : 'SPIN BOTH ↗'}
           </span>
-          <span className="spin-btn-glow" />
+          <span className="spin-btn-shortcut">SPACE</span>
         </button>
         <p className="spin-caption">TWO VARIABLES. ONE NEW IDEA.</p>
       </div>
 
-      {/* Result Reveal Section */}
+      {/* Centralized Result Reveal */}
       <ResultPanel
         brand={bothStopped ? selectedBrand : null}
         product={bothStopped ? selectedProduct : null}

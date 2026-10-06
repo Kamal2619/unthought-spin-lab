@@ -5,26 +5,26 @@ interface WheelProps {
   items: string[];
   /** Current rotation angle in degrees (clockwise) */
   rotationAngle: number;
-  /** Size in px (default 400) */
+  /** Size in px (default 380) */
   size?: number;
   /** Variant styling */
   variant?: 'brand' | 'product';
 }
 
 /**
- * Wheel — Genuine segmented roulette-style spin wheel rendered with SVG.
+ * Wheel — Studio-grade segmented roulette-style spin wheel rendered in SVG.
  *
- * Characteristics:
- * - Precise angular sector calculation: 360 / N
- * - Radial label placement along the centerline of each segment
- * - Fixed vermilion pointer at 12 o'clock (top)
- * - Industrial-inspired center hub and outer machined rim
- * - Crisp contrast with zero label clipping
+ * Engineered with:
+ * - Mathematical angular sectors: 360 / N
+ * - Precision radial typography along sector bisectors
+ * - Fixed vermilion needle indicator at 12 o'clock with clear margin to labels
+ * - Industrial concentric hub with variant branding
+ * - High-contrast charcoal segments with hairline dividers
  */
 const Wheel: React.FC<WheelProps> = ({
   items,
   rotationAngle,
-  size = 400,
+  size = 380,
   variant = 'brand',
 }) => {
   const n = items.length;
@@ -32,19 +32,19 @@ const Wheel: React.FC<WheelProps> = ({
 
   const cx = size / 2;
   const cy = size / 2;
-  const outerRadius = size / 2 - 8;
-  const innerRadius = size * 0.16; // Central hub radius
+  const outerRadius = size / 2 - 10;
+  const innerRadius = size * 0.15; // Hub radius (~57px on 380px wheel)
 
-  // Monochromatic palette
+  // Monochromatic palette — high contrast, ultra-refined
   const segFills =
     variant === 'brand'
-      ? ['#252525', '#1D1D1D']
-      : ['#282828', '#202020'];
-  const separatorColor = '#3E3E3E';
-  const textColor = '#ECEBE8';
-  const hubColor = '#171717';
-  const hubBorder = '#484848';
-  const outerRimColor = '#2F2F2F';
+      ? ['#242424', '#1B1B1B']
+      : ['#262626', '#1D1D1D'];
+  const separatorColor = '#3A3A3A';
+  const textColor = '#F0EFEA';
+  const hubColor = '#161616';
+  const hubBorder = '#444444';
+  const outerRimColor = '#2C2C2C';
   const pointerColor = '#F04427';
 
   /**
@@ -78,7 +78,7 @@ const Wheel: React.FC<WheelProps> = ({
 
   /**
    * Precalculate geometry for all segments:
-   * Each label is placed on a radial ray rotated by midDeg from 12 o'clock.
+   * Labels start cleanly inside the outer rim with sufficient clearance from the pointer.
    */
   const segments = useMemo(() => {
     return items.map((label, i) => {
@@ -95,8 +95,8 @@ const Wheel: React.FC<WheelProps> = ({
       const sepX2 = cx + outerRadius * Math.cos(sepRad);
       const sepY2 = cy + outerRadius * Math.sin(sepRad);
 
-      // Text formatting: uppercase, trimmed if needed
-      const maxLen = n > 20 ? 15 : 17;
+      // Max characters to ensure zero overlap
+      const maxLen = n > 20 ? 14 : 16;
       const displayLabel = label.length > maxLen ? label.slice(0, maxLen - 1) + '…' : label;
 
       return {
@@ -113,9 +113,10 @@ const Wheel: React.FC<WheelProps> = ({
     });
   }, [items, n, segmentAngle, cx, cy, outerRadius, innerRadius]);
 
-  // Scaled typography based on segment density
-  const fontSize = n > 20 ? 8.5 : 10.5;
-  const labelStartOffset = outerRadius - 16; // Distance from center where label starts reading inward
+  // Scaled typography
+  const fontSize = n > 20 ? 8 : 10;
+  // Label starts 22px inside outer rim, leaving comfortable clearance below pointer tip
+  const labelStartOffset = outerRadius - 22;
 
   return (
     <div className="wheel-container" style={{ width: size, height: size }}>
@@ -130,29 +131,28 @@ const Wheel: React.FC<WheelProps> = ({
         <defs>
           {/* Subtle wheel drop shadow */}
           <filter id={`wheel-shadow-${variant}`} x="-15%" y="-15%" width="130%" height="130%">
-            <feDropShadow dx="0" dy="6" stdDeviation="10" floodColor="#000000" floodOpacity="0.25" />
+            <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#000000" floodOpacity="0.3" />
           </filter>
 
-          {/* Pointer crisp drop shadow */}
+          {/* Pointer shadow */}
           <filter id={`pointer-shadow-${variant}`} x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.4" />
+            <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#000000" floodOpacity="0.45" />
           </filter>
         </defs>
 
-        {/* Outer casing / rim shadow */}
+        {/* Outer casing shadow */}
         <circle
           cx={cx}
           cy={cy}
           r={outerRadius + 3}
           fill="none"
           stroke={outerRimColor}
-          strokeWidth="3"
+          strokeWidth="3.5"
           filter={`url(#wheel-shadow-${variant})`}
         />
 
         {/* ========================================================
-            ROTATING ASSEMBLY
-            Spins by rotationAngle around (cx, cy)
+            ROTATING ASSEMBLY (Spins clockwise around cx, cy)
             ======================================================== */}
         <g transform={`rotate(${rotationAngle}, ${cx}, ${cy})`}>
           {/* 1. Segment sectors */}
@@ -175,9 +175,9 @@ const Wheel: React.FC<WheelProps> = ({
 
           {/* 3. Radial labels:
                  Each label ray is rotated to midDeg.
-                 Text is placed along the ray (from outer rim towards hub).
-                 `dominantBaseline="central"` + `textAnchor="end"` guarantees
-                 perfect radial alignment with zero clipping. */}
+                 Text starts at labelStartOffset and reads toward hub.
+                 dominantBaseline="central" + textAnchor="start" ensures
+                 perfect radial tracking along the bisector. */}
           {segments.map((seg, i) => (
             <g
               key={`label-group-${i}`}
@@ -190,7 +190,7 @@ const Wheel: React.FC<WheelProps> = ({
                 fontSize={fontSize}
                 fontFamily="'Space Grotesk', 'Inter', sans-serif"
                 fontWeight="600"
-                letterSpacing="0.06em"
+                letterSpacing="0.08em"
                 textAnchor="start"
                 dominantBaseline="central"
                 transform={`rotate(90, ${cx}, ${cy - labelStartOffset})`}
@@ -201,13 +201,13 @@ const Wheel: React.FC<WheelProps> = ({
             </g>
           ))}
 
-          {/* Subtle perimeter track circle */}
+          {/* Perimeter concentric hairline */}
           <circle
             cx={cx}
             cy={cy}
-            r={outerRadius}
+            r={outerRadius - 2}
             fill="none"
-            stroke="#363636"
+            stroke="rgba(255, 255, 255, 0.08)"
             strokeWidth="1"
           />
 
@@ -223,21 +223,29 @@ const Wheel: React.FC<WheelProps> = ({
         </g>
 
         {/* ========================================================
-            STATIONARY ELEMENTS (Hub & Pointer)
+            STATIONARY ELEMENTS (Rim, Hub, & Pointer)
             ======================================================== */}
 
-        {/* Outer machined rim */}
+        {/* Outer machined rim bezel */}
         <circle
           cx={cx}
           cy={cy}
-          r={outerRadius + 1.5}
+          r={outerRadius + 1}
           fill="none"
           stroke={outerRimColor}
           strokeWidth="3.5"
         />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={outerRadius + 3}
+          fill="none"
+          stroke="#414141"
+          strokeWidth="1"
+        />
 
-        {/* Center Hub assembly */}
-        {/* Outer hub bevel */}
+        {/* Center Hub Assembly */}
+        {/* Hub Outer Ring */}
         <circle
           cx={cx}
           cy={cy}
@@ -246,50 +254,66 @@ const Wheel: React.FC<WheelProps> = ({
           stroke={hubBorder}
           strokeWidth="2"
         />
-        {/* Inner concentric ring */}
+        {/* Hub Intermediate Ring */}
         <circle
           cx={cx}
           cy={cy}
-          r={innerRadius * 0.65}
-          fill="#1E1E1E"
+          r={innerRadius * 0.72}
+          fill="#1F1F1F"
           stroke="#383838"
           strokeWidth="1"
         />
-        {/* Hub center cap */}
+        {/* Hub Inner Core */}
         <circle
           cx={cx}
           cy={cy}
-          r={innerRadius * 0.3}
-          fill="#2A2A2A"
+          r={innerRadius * 0.42}
+          fill="#272727"
         />
-        {/* Central precision pin */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={2.5}
-          fill="#555555"
-        />
+        {/* Central Hub Label (01 or 02) */}
+        <text
+          x={cx}
+          y={cy}
+          fill="#8A8A8A"
+          fontSize="9"
+          fontFamily="'Space Grotesk', sans-serif"
+          fontWeight="700"
+          letterSpacing="0.1em"
+          textAnchor="middle"
+          dominantBaseline="central"
+          style={{ userSelect: 'none', pointerEvents: 'none' }}
+        >
+          {variant === 'brand' ? '01' : '02'}
+        </text>
 
         {/* ========================================================
             FIXED POINTER AT 12 O'CLOCK
-            Crisp vermilion indicator pointing directly into the winning segment.
+            Precision vermilion indicator pointing directly into the winning segment.
             ======================================================== */}
         <g filter={`url(#pointer-shadow-${variant})`}>
-          {/* Base backing */}
+          {/* Main Pointer Arrowhead */}
           <polygon
-            points={`${cx - 10},${cy - outerRadius - 4} ${cx + 10},${cy - outerRadius - 4} ${cx},${cy - outerRadius + 16}`}
+            points={`${cx - 9},${cy - outerRadius - 6} ${cx + 9},${cy - outerRadius - 6} ${cx},${cy - outerRadius + 12}`}
             fill={pointerColor}
-            stroke="#C0331B"
+            stroke="#BD3219"
             strokeWidth="1"
           />
-          {/* Pointer center ridge highlight */}
+          {/* Center Precision Ridge */}
           <line
             x1={cx}
-            y1={cy - outerRadius - 3}
+            y1={cy - outerRadius - 5}
             x2={cx}
-            y2={cy - outerRadius + 15}
-            stroke="rgba(255, 255, 255, 0.4)"
+            y2={cy - outerRadius + 11}
+            stroke="rgba(255, 255, 255, 0.45)"
             strokeWidth="1"
+          />
+          {/* Base Mount Rivet */}
+          <circle
+            cx={cx}
+            cy={cy - outerRadius - 5}
+            r={2}
+            fill="#FFFFFF"
+            opacity="0.8"
           />
         </g>
       </svg>

@@ -1,13 +1,14 @@
 import React from 'react';
 
 /**
- * Hero — Compact editorial introduction.
- * Calibrated height so the wheels remain front and center in 16:9 recordings.
+ * Hero — Editorial title section with centralized typography.
+ * Proportionally calibrated so the dual wheels remain front and center
+ * in the first viewport for screen recordings.
  */
 const Hero: React.FC = () => {
   return (
     <section className="hero-section" aria-labelledby="hero-title">
-      <div className="hero-eyebrow-wrapper">
+      <div className="hero-eyebrow-container">
         <span className="hero-eyebrow">THE UNEXPECTED PRODUCT PROJECT</span>
       </div>
       <h1 className="hero-title" id="hero-title">

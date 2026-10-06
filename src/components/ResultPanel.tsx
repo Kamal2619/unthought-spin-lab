@@ -8,13 +8,13 @@ interface ResultPanelProps {
 }
 
 /**
- * ResultPanel — Clean, cinematic editorial reveal for the Brand × Product combination.
+ * ResultPanel — Centralized, exhibition-grade typography reveal.
  *
- * Sequence when both wheels finish:
- *   Stage 1 (60ms): Brand reveals
- *   Stage 2 (180ms): Vermilion '×' reveals
- *   Stage 3 (300ms): Product reveals
- *   Stage 4 (450ms): Divider and metadata descriptor fade in
+ * Staggered reveal sequence:
+ *   Stage 1 (50ms): Brand slides up & fades in
+ *   Stage 2 (160ms): Vermilion '×' reveals
+ *   Stage 3 (270ms): Product slides up & fades in
+ *   Stage 4 (420ms): Divider & descriptor metadata fade in
  */
 const ResultPanel: React.FC<ResultPanelProps> = ({
   brand,
@@ -39,11 +39,10 @@ const ResultPanel: React.FC<ResultPanelProps> = ({
     }
 
     if (hasResult) {
-      // Rapid, punchy staggered reveal (entire reveal completes in under 500ms)
-      const t1 = setTimeout(() => setShowBrand(true), 60);
-      const t2 = setTimeout(() => setShowCross(true), 180);
-      const t3 = setTimeout(() => setShowProduct(true), 300);
-      const t4 = setTimeout(() => setShowDetails(true), 450);
+      const t1 = setTimeout(() => setShowBrand(true), 50);
+      const t2 = setTimeout(() => setShowCross(true), 160);
+      const t3 = setTimeout(() => setShowProduct(true), 270);
+      const t4 = setTimeout(() => setShowDetails(true), 420);
 
       return () => {
         clearTimeout(t1);
@@ -61,45 +60,48 @@ const ResultPanel: React.FC<ResultPanelProps> = ({
       aria-atomic="true"
       id="result-panel"
     >
-      <div className="result-header">
-        <p className="result-eyebrow">YOUR NEXT CREATIVE CHALLENGE</p>
+      {/* Top Metadata Header */}
+      <div className="result-top-bar">
+        <span className="result-eyebrow">YOUR NEXT CREATIVE CHALLENGE</span>
         {conceptNumber > 0 && (
-          <span className="result-badge">
+          <span className="result-concept-tag">
             CONCEPT {String(conceptNumber).padStart(3, '0')}
           </span>
         )}
       </div>
 
-      <div className="result-display-wrapper">
+      {/* Main Combination Showcase */}
+      <div className="result-stage">
         {hasResult ? (
           <div className="result-combination">
-            <span className={`result-token result-brand ${showBrand ? 'active' : ''}`}>
+            <span className={`result-word result-brand ${showBrand ? 'active' : ''}`}>
               {brand}
             </span>
-            <span className={`result-cross ${showCross ? 'active' : ''}`}>
+            <span className={`result-times ${showCross ? 'active' : ''}`}>
               ×
             </span>
-            <span className={`result-token result-product ${showProduct ? 'active' : ''}`}>
+            <span className={`result-word result-product ${showProduct ? 'active' : ''}`}>
               {product}
             </span>
           </div>
         ) : (
-          <div className="result-combination placeholder-mode">
-            <span className="result-placeholder">BRAND</span>
-            <span className="result-placeholder-cross">×</span>
-            <span className="result-placeholder">PRODUCT</span>
+          <div className="result-combination placeholder-state">
+            <span className="placeholder-text">BRAND</span>
+            <span className="placeholder-cross">×</span>
+            <span className="placeholder-text">PRODUCT</span>
           </div>
         )}
       </div>
 
-      <div className={`result-footer ${showDetails || isSpinning ? 'visible' : ''}`}>
-        <div className="result-accent-bar" />
+      {/* Bottom Accent & Subtitle */}
+      <div className={`result-bottom-details ${showDetails || isSpinning ? 'visible' : ''}`}>
+        <div className="result-accent-dash" />
         <p className="result-descriptor">
           {isSpinning
-            ? 'Calculating unexpected trajectory...'
+            ? 'Calculating unexpected trajectory…'
             : hasResult
             ? 'A new product concept awaits.'
-            : 'One brand. One unlikely product. One new idea.'}
+            : 'Spin the wheels to generate a concept.'}
         </p>
       </div>
     </section>
