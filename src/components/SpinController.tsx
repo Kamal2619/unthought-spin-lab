@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import Wheel from './Wheel';
+import TopResultBanner from './TopResultBanner';
 import ResultPanel from './ResultPanel';
 import { useWheelAnimation } from '../hooks/useWheelAnimation';
 import { brands, products } from '../data';
@@ -137,7 +138,17 @@ const SpinController: React.FC<SpinControllerProps> = ({
 
   return (
     <div className="spin-experience">
-      {/* Centralized Dual Wheel Stage */}
+      {/* 1. Prominent Top Result Banner (Directly on top of the wheels) */}
+      <TopResultBanner
+        brand={selectedBrand}
+        product={selectedProduct}
+        brandFinished={brandFinished}
+        productFinished={productFinished}
+        isSpinning={isSpinning}
+        conceptNumber={conceptCount}
+      />
+
+      {/* 2. Centralized Dual Wheel Stage */}
       <section className="spin-stage" aria-label="Interactive Dual Wheels">
         {/* Wheel 01: Brand */}
         <div className="wheel-column">
@@ -179,7 +190,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
         </div>
       </section>
 
-      {/* Centralized Action Area */}
+      {/* 3. Centralized Action Area */}
       <div className="spin-action-area">
         <button
           className={`spin-btn ${isSpinning ? 'spinning' : ''}`}
@@ -196,7 +207,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
         <p className="spin-caption">TWO VARIABLES. ONE NEW IDEA.</p>
       </div>
 
-      {/* Centralized Result Reveal */}
+      {/* 4. Exhibition Placard Result Reveal (Bottom Summary) */}
       <ResultPanel
         brand={bothStopped ? selectedBrand : null}
         product={bothStopped ? selectedProduct : null}
