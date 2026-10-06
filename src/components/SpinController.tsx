@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import Wheel from './Wheel';
 import TopResultBanner from './TopResultBanner';
-import ResultPanel from './ResultPanel';
 import { useWheelAnimation } from '../hooks/useWheelAnimation';
 import { brands, products } from '../data';
 
@@ -17,7 +16,8 @@ interface CombinationRecord {
 }
 
 /**
- * SpinController — Master coordinator for the centralized Brand × Product spin lab.
+ * SpinController — Streamlined, ultra-clean master coordinator.
+ * Keeps exclusively the top result display, the dual wheels, and the spin button.
  */
 const SpinController: React.FC<SpinControllerProps> = ({
   playTick,
@@ -25,7 +25,6 @@ const SpinController: React.FC<SpinControllerProps> = ({
   ensureContext,
 }) => {
   const historyRef = useRef<CombinationRecord[]>([]);
-  const [conceptCount, setConceptCount] = useState<number>(0);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
@@ -54,7 +53,6 @@ const SpinController: React.FC<SpinControllerProps> = ({
   });
 
   const isSpinning = brandWheel.isSpinning || productWheel.isSpinning;
-  const bothStopped = brandFinished && productFinished && !isSpinning;
 
   /**
    * Deterministic unique pair selection.
@@ -105,7 +103,6 @@ const SpinController: React.FC<SpinControllerProps> = ({
 
     setSelectedBrand(brands[brandIndex]);
     setSelectedProduct(products[productIndex]);
-    setConceptCount((prev) => prev + 1);
 
     // Brand wheel: 3.8s, 5 full revolutions
     const brandDuration = 3800 + Math.random() * 250;
@@ -138,14 +135,13 @@ const SpinController: React.FC<SpinControllerProps> = ({
 
   return (
     <div className="spin-experience">
-      {/* 1. Prominent Top Result Banner (Directly on top of the wheels) */}
+      {/* 1. Clean Stylish Result Marquee (Directly on top of the wheels) */}
       <TopResultBanner
         brand={selectedBrand}
         product={selectedProduct}
         brandFinished={brandFinished}
         productFinished={productFinished}
         isSpinning={isSpinning}
-        conceptNumber={conceptCount}
       />
 
       {/* 2. Centralized Dual Wheel Stage */}
@@ -204,16 +200,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
           </span>
           <span className="spin-btn-shortcut">SPACE</span>
         </button>
-        <p className="spin-caption">TWO VARIABLES. ONE NEW IDEA.</p>
       </div>
-
-      {/* 4. Exhibition Placard Result Reveal (Bottom Summary) */}
-      <ResultPanel
-        brand={bothStopped ? selectedBrand : null}
-        product={bothStopped ? selectedProduct : null}
-        isSpinning={isSpinning}
-        conceptNumber={conceptCount}
-      />
     </div>
   );
 };
