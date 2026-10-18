@@ -56,10 +56,10 @@ const SpinController: React.FC<SpinControllerProps> = ({
 
   /**
    * Deterministic unique pair selection.
-   * Avoids consecutive duplicates, and gracefully cycles across 800 combinations.
+   * Avoids consecutive duplicates, and gracefully cycles across all combinations.
    */
   const pickNextPair = useCallback((): CombinationRecord => {
-    const totalPossible = brands.length * products.length; // 800
+    const totalPossible = brands.length * products.length;
     if (historyRef.current.length >= totalPossible) {
       historyRef.current = [];
     }

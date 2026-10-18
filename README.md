@@ -25,10 +25,11 @@ When the user triggers **SPIN BOTH ↗** (or hits <kbd>Space</kbd>), both wheels
 - **Web Audio API Mechanical Sound Engine:** Synthesizes realistic mechanical flapper clicks that scale pitch and volume with rotational velocity, ending with an authoritative stop clunk on each wheel.
 - **Progressive Live Result Marquee:** Centered directly on top of the wheels for instant visual payoff during screen recording.
 - **Art-Directed Studio Aesthetic:**
-  - Background: Warm off-white (`#F5F4F0`)
+  - Background: Warm off-white (`#F5F4F0`) in Light Mode, Deep Graphite (`#0E0E0E`) in Dark Mode
   - Typography: Space Grotesk (display) + Inter (UI)
   - Wheels: Deep charcoal alternating sectors with hairline separators
   - Accent: Vivid Vermilion (`#F04427`)
+- **Light & Dark Mode:** Dynamic studio theme toggle with system preference detection and localStorage persistence.
 - **800 Combinations:** Tracks history to avoid consecutive duplicate pairings.
 
 ---

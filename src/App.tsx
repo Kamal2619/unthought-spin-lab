@@ -1,12 +1,18 @@
 import { Header, SpinController } from './components';
-import { useWheelSound } from './hooks';
+import { useWheelSound, useTheme } from './hooks';
 
 function App() {
   const { muted, toggleMute, playTick, playStop, ensureContext } = useWheelSound();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="app">
-      <Header muted={muted} onToggleMute={toggleMute} />
+      <Header
+        muted={muted}
+        onToggleMute={toggleMute}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
       <main className="main">
         <SpinController
           playTick={playTick}

@@ -148,6 +148,7 @@ const Wheel: React.FC<WheelProps> = ({
           fill="none"
           stroke={outerRimColor}
           strokeWidth="3.5"
+          className="wheel-outer-casing"
           filter={`url(#wheel-shadow-${variant})`}
         />
 
