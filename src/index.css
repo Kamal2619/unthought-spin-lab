@@ -320,10 +320,13 @@ body {
 
 .marquee-cross {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-  font-weight: 400;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 600;
+  font-style: italic;
   color: var(--accent);
   line-height: 1;
+  text-transform: lowercase;
+  padding: 0 4px;
 }
 
 /* Progressive locking states */
@@ -352,8 +355,13 @@ body {
 
 .marquee-placeholder-cross {
   font-family: var(--font-display);
-  font-size: clamp(1.3rem, 2.6vw, 1.8rem);
-  color: var(--border);
+  font-size: clamp(1.05rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1;
+  text-transform: lowercase;
+  padding: 0 4px;
 }
 
 /* ============================================================

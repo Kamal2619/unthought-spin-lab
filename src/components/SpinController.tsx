@@ -24,7 +24,7 @@ const SpinController: React.FC<SpinControllerProps> = ({
   playStop,
   ensureContext,
 }) => {
-  const historyRef = useRef<CombinationRecord[]>([]);
+  const spinIndexRef = useRef<number>(0);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
@@ -55,39 +55,45 @@ const SpinController: React.FC<SpinControllerProps> = ({
   const isSpinning = brandWheel.isSpinning || productWheel.isSpinning;
 
   /**
-   * Deterministic unique pair selection.
-   * Avoids consecutive duplicates, and gracefully cycles across all combinations.
+   * Deterministic pairing progression.
+   * Cycles naturally in sets of 5, resetting to 1 on each page refresh.
    */
   const pickNextPair = useCallback((): CombinationRecord => {
-    const totalPossible = brands.length * products.length;
-    if (historyRef.current.length >= totalPossible) {
-      historyRef.current = [];
-    }
+    const LANDING_SEQUENCE = [
+      { brand: 'Rolex', product: 'Pen' },
+      { brand: 'Louis Vuitton', product: 'Cigarettes' },
+      { brand: 'IKEA', product: 'Playing Cards' },
+      { brand: 'LEGO', product: 'Lighter' },
+      { brand: 'Nintendo', product: 'Umbrella' },
+    ];
 
-    const last = historyRef.current[historyRef.current.length - 1];
+    const currentStep = spinIndexRef.current;
+    spinIndexRef.current += 1;
 
-    let bIdx: number;
-    let pIdx: number;
-    let attempts = 0;
+    const target = LANDING_SEQUENCE[currentStep % LANDING_SEQUENCE.length];
 
-    do {
-      bIdx = Math.floor(Math.random() * brands.length);
-      pIdx = Math.floor(Math.random() * products.length);
-      attempts++;
-    } while (
-      attempts < 100 &&
-      last &&
-      last.brandIndex === bIdx &&
-      last.productIndex === pIdx
-    );
+    // Case-insensitive flexible resolution to map robustly to index
+    const norm = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const targetBrandNorm = norm(target.brand);
+    const targetProdNorm = norm(target.product);
 
-    const record = { brandIndex: bIdx, productIndex: pIdx };
-    historyRef.current.push(record);
-    return record;
+    let bIdx = brands.findIndex((b) => {
+      const bNorm = norm(b);
+      return bNorm === targetBrandNorm || (targetBrandNorm === 'lv' && bNorm.includes('louisvuitton'));
+    });
+    if (bIdx === -1) bIdx = 0;
+
+    let pIdx = products.findIndex((p) => {
+      const pNorm = norm(p);
+      return pNorm === targetProdNorm || pNorm.startsWith(targetProdNorm) || targetProdNorm.startsWith(pNorm);
+    });
+    if (pIdx === -1) pIdx = 0;
+
+    return { brandIndex: bIdx, productIndex: pIdx };
   }, []);
 
   /**
-   * Shared SPIN trigger.
+   * Shared SPIN trigger with natural momentum variance.
    */
   const handleSpin = useCallback(() => {
     if (isSpinning) return;
@@ -104,14 +110,14 @@ const SpinController: React.FC<SpinControllerProps> = ({
     setSelectedBrand(brands[brandIndex]);
     setSelectedProduct(products[productIndex]);
 
-    // Brand wheel: 3.8s, 5 full revolutions
-    const brandDuration = 3800 + Math.random() * 250;
-    const brandRevs = 5;
+    // Brand wheel: 3.7s - 4.1s, with 5 to 6 revolutions for organic natural feel
+    const brandRevs = 5 + (Math.random() > 0.45 ? 1 : 0);
+    const brandDuration = 3750 + Math.random() * 400;
     brandWheel.startSpin(brandIndex, brandDuration, brandRevs);
 
-    // Product wheel: 4.4s, 6 full revolutions (stops ~500ms after Brand for dynamic cadence)
-    const productDuration = 4400 + Math.random() * 250;
-    const productRevs = 6;
+    // Product wheel: stops naturally ~450ms-750ms after Brand for realistic independent deceleration
+    const productRevs = 6 + (Math.random() > 0.45 ? 1 : 0);
+    const productDuration = brandDuration + 480 + Math.random() * 320;
     productWheel.startSpin(productIndex, productDuration, productRevs);
   }, [isSpinning, ensureContext, pickNextPair, brandWheel, productWheel]);
 

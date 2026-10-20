@@ -40,7 +40,7 @@ export const products: string[] = [
   'Energy Drink',
   'Playing Cards',
   'Gym Bag',
-  'Cigarette',
+  'Cigarettes',
   'Gun',
   'Laptop',
 ];

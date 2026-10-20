@@ -79,11 +79,12 @@ export function useWheelAnimation(config: AnimationConfig) {
 
       const startAngle = angleRef.current;
 
-      // 1. Center of winning segment in wheel coordinates (clockwise from top)
-      const segmentCenter = (targetIndex + 0.5) * segmentAngle;
+      // 1. Center of winning segment with organic physical variance (never synthetic dead-center)
+      const naturalVariance = (Math.random() - 0.5) * 0.32;
+      const segmentTarget = (targetIndex + 0.5 + naturalVariance) * segmentAngle;
 
-      // 2. Modulo target angle where segmentCenter lands exactly at top (0°)
-      const targetModulo = (360 - (segmentCenter % 360)) % 360;
+      // 2. Modulo target angle where segmentTarget lands exactly at top pointer (0°)
+      const targetModulo = (360 - (segmentTarget % 360)) % 360;
 
       // 3. Current modulo angle
       const currentModulo = ((startAngle % 360) + 360) % 360;

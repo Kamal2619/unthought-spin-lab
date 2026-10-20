@@ -32,7 +32,7 @@ const TopResultBanner: React.FC<TopResultBannerProps> = ({
         {isComplete ? (
           <div className="marquee-combination animate-reveal">
             <span className="marquee-brand">{brand}</span>
-            <span className="marquee-cross">×</span>
+            <span className="marquee-cross">makes</span>
             <span className="marquee-product">{product}</span>
           </div>
         ) : isSpinning ? (
@@ -40,7 +40,7 @@ const TopResultBanner: React.FC<TopResultBannerProps> = ({
             <span className={`marquee-brand ${brandFinished ? 'locked' : 'pending'}`}>
               {brandFinished && brand ? brand : '···'}
             </span>
-            <span className="marquee-cross">×</span>
+            <span className="marquee-cross">makes</span>
             <span className={`marquee-product ${productFinished ? 'locked' : 'pending'}`}>
               {productFinished && product ? product : '···'}
             </span>
@@ -48,7 +48,7 @@ const TopResultBanner: React.FC<TopResultBannerProps> = ({
         ) : (
           <div className="marquee-combination is-placeholder">
             <span className="marquee-placeholder-text">BRAND</span>
-            <span className="marquee-placeholder-cross">×</span>
+            <span className="marquee-placeholder-cross">makes</span>
             <span className="marquee-placeholder-text">PRODUCT</span>
           </div>
         )}
